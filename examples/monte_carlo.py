@@ -96,6 +96,7 @@ def bearing_flat(start, end):
 
 
 if __name__ == '__main__':
+    print("Time, Altitude, Total Acceleration, Total Velocity, Stability, Pressure")
     points = LandingPoints()
     points.add_simulations(1)
     points.print_stats()
