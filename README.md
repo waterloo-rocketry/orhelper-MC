@@ -53,14 +53,27 @@ For most people jpype will be able to automatically find the JDK. However, if it
     ```
     CLASSPATH=\some\path\to\OpenRocket-15.03.jar
     ```
-  --- WLOO ROCKETRY: An OpenRocket is already provided in this repo, set your CLASSPATH to that one.---
-
+  --- WLOO ROCKETRY: An OpenRocket is already provided in this repo, set your CLASSPATH to that one. ---
+  --- If it is your first time running you may need to first do 
+  ```
+  $ java -jar OpenRocket.jar
+  ```
+  and load the engine RSE (Kismet) and save the rocket along with the engine to your desired ork file. ---
 - See `examples/` for usage examples
 - See [the OpenRocket wiki](https://github.com/openrocket/openrocket/wiki/Scripting-with-Python-and-JPype) for more info on usage and the examples 
 
   --- FORMAT :
   ```
   time, altitude, total accel, total vel, stability, air pressure
+  ```
+  ---
+
+ ## Usage (for WLOO ROCKETRY):
+ ```
+ $ bash ./examples/mc_script.sh <num runs>
+ ```
+ 
+ - Please change the configurations in `examples/monte_carlo.py` as needed.
 
 ## Credits
 - Richard Graham for the original script: [Source](https://sourceforge.net/p/openrocket/mailman/openrocket-devel/thread/4F17AA0C.1040002@rdg.cc/)
