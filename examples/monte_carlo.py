@@ -17,7 +17,7 @@ class LandingPoints(list):
 
             # Load the document and get simulation
             orh = orhelper.Helper(instance)
-            doc = orh.load_doc(os.path.join('/home/robbot/Desktop/UW/Waterloo-Rocketry/orhelper/examples/', '2p4Sim.ork'))
+            doc = orh.load_doc(os.path.join('/home/robbot/Desktop/UW/Waterloo-Rocketry/', '2p4SimWRSE.ork'))
             sim = doc.getSimulation(0)
 
             # Randomize various parameters
@@ -28,20 +28,24 @@ class LandingPoints(list):
             for p in range(num):
                 print('Running simulation ', p)
 
-                opts.setLaunchRodAngle(math.radians(gauss(45, 5)))  # 45 +- 5 deg in direction
+                opts.setLaunchRodAngle(math.radians(gauss(0, 0)))  # 45 +- 5 deg in direction
                 opts.setLaunchRodDirection(math.radians(gauss(0, 5)))  # 0 +- 5 deg in direction
-                opts.setWindSpeedAverage(gauss(15, 5))  # 15 +- 5 m/s in wind
-                '''
+                opts.setWindSpeedAverage(gauss(2, 0.2))  # 15 +- 5 m/s in wind
+
+                """
+                
                 for component_name in ('Nose cone', 'Body tube'):  # 5% in the mass of various components
                     component = orh.get_component_named(rocket, component_name)
                     mass = component.getMass()
                     component.setMassOverridden(True)
                     component.setOverrideMass(mass * gauss(1.0, 0.05))
-                '''
-                airstarter = AirStart(50)  # simulation listener to drop from 50m
+                """
+
+                airstarter = AirStart(0)  # simulation listener to drop from 0m
                 lp = LandingPoint(self.ranges, self.bearings)
                 orh.run_simulation(sim, listeners=(airstarter, lp))
                 self.append(lp)
+                print("lp", self.ranges, self.bearings)
 
     def print_stats(self):
         print(
@@ -59,11 +63,14 @@ class LandingPoint(orhelper.AbstractSimulationListener):
         worldpos = status.getRocketWorldPosition()
         conditions = status.getSimulationConditions()
         launchpos = conditions.getLaunchSite()
+        
+        """
         geodetic_computation = conditions.getGeodeticComputation()
 
         if geodetic_computation != geodetic_computation.FLAT:
             raise Exception("GeodeticComputationStrategy type not supported")
-
+        """
+    
         self.ranges.append(range_flat(launchpos, worldpos))
         self.bearings.append(bearing_flat(launchpos, worldpos))
 
