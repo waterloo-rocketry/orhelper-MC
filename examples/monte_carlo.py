@@ -21,16 +21,34 @@ class LandingPoints(list):
             sim = doc.getSimulation(0)
 
             # Randomize various parameters
-            opts = sim.getOptions()
+            opts = sim.getOptions() 
             rocket = opts.getRocket()
 
             # Run num simulations and add to self
             for p in range(num):
                 print('Running simulation ', p)
 
-                opts.setLaunchRodAngle(math.radians(gauss(0, 0)))  # 45 +- 5 deg in direction
-                opts.setLaunchRodDirection(math.radians(gauss(0, 5)))  # 0 +- 5 deg in direction
-                opts.setWindSpeedAverage(gauss(2, 0.2))  # 15 +- 5 m/s in wind
+                # Set Options
+
+                # Units are in m/s so conversion needed
+                opts.setLaunchRodLength(260 * 2.54) # 260 inches to cm
+                opts.setLaunchRodAngle(math.radians(gauss(5, 1)))  # 5 +- 1 deg in Launch Angle
+                opts.setLaunchRodDirection(math.radians(gauss(90, 1)))  # 90 +- 1 deg in direction
+                
+                opts.setWindSpeedAverage(gauss(9 * 0.44707, 1 * 0.44707))  # 9 mph +- 1 in wind
+                opts.setWindSpeedDeviation(gauss(0.9 * 0.44707, 0.1 * 0.44707))  # 0.9 mph +- 0.1 Std.Dev of wind
+                opts.setWindTurbulenceIntensity(0.1)  # 10%
+                opts.setWindDirection(gauss(90, 30))  # 90+-30 deg
+
+                opts.setLaunchLongitude(-106) # -106E
+                opts.setLaunchLatitude(32.9) # 32.9N
+                opts.setLaunchAltitude(4848*0.3048) # 4848 ft
+
+                opts.setLaunchTemperature(gauss(27.778, 1))  # 27.778 +- 1 Celcius (82 F) in Temperature
+                opts.setLaunchPressure(gauss(1008, 1))  # 1008 mbar +- 1 in Pressure
+
+
+
 
                 """
                 
@@ -41,7 +59,7 @@ class LandingPoints(list):
                     component.setOverrideMass(mass * gauss(1.0, 0.05))
                 """
 
-                airstarter = AirStart(0)  # simulation listener to drop from 0m
+                airstarter = AirStart(1000)  # simulation listener to drop from 0m
                 lp = LandingPoint(self.ranges, self.bearings)
                 orh.run_simulation(sim, listeners=(airstarter, lp))
                 self.append(lp)
