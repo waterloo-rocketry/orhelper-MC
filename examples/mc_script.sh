@@ -1,8 +1,8 @@
 num=$1
-while [ $num -ge 0 ]
+while [ $num -gt 0 ]
 do
-  echo "Sim Number: ${num}" >> output 
+  echo "Sim Number: ${num}" 
   ((num--))
-  python monte_carlo.py >> output 
+  python monte_carlo.py  
 done
 

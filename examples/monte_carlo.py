@@ -17,7 +17,7 @@ class LandingPoints(list):
 
             # Load the document and get simulation
             orh = orhelper.Helper(instance)
-            doc = orh.load_doc(os.path.join('/home/robbot/Desktop/UW/Waterloo-Rocketry/', '2p4SimWRSE.ork'))
+            doc = orh.load_doc(os.path.join('/home/robbot/Desktop/UW/Waterloo-Rocketry/orhelper/examples', 'c31a.ork'))
             sim = doc.getSimulation(0)
 
             # Randomize various parameters
@@ -26,27 +26,40 @@ class LandingPoints(list):
 
             # Run num simulations and add to self
             for p in range(num):
-                print('Running simulation ', p)
+                # print('Running simulation ', p)
 
                 # Set Options
 
                 # Units are in m/s so conversion needed
-                opts.setLaunchRodLength(260 * 2.54) # 260 inches to cm
-                opts.setLaunchRodAngle(math.radians(gauss(5, 1)))  # 5 +- 1 deg in Launch Angle
-                opts.setLaunchRodDirection(math.radians(gauss(90, 1)))  # 90 +- 1 deg in direction
+                opts.setLaunchRodLength(260 * 2.54 / 100) # 260 inches (to cm) to m
+                opts.setLaunchRodAngle(math.radians(5))  # 5 +- 1 deg in Launch Angle
+                #opts.setLaunchRodDirection(math.radians(90))  # 90 +- 1 deg in direction
                 
-                opts.setWindSpeedAverage(gauss(9 * 0.44707, 1 * 0.44707))  # 9 mph +- 1 in wind
-                opts.setWindSpeedDeviation(gauss(0.9 * 0.44707, 0.1 * 0.44707))  # 0.9 mph +- 0.1 Std.Dev of wind
-                opts.setWindTurbulenceIntensity(0.1)  # 10%
-                opts.setWindDirection(gauss(90, 30))  # 90+-30 deg
+                windspeed = gauss(8.449, 4.45)
+                opts.setWindSpeedAverage(windspeed * 0.44707)  # 8.449 mph 
+                print("Cond: Avg WindSpeed: ", windspeed, "mph")
+                # opts.setWindSpeedDeviation(0.8449 * 0.44707)  # 4.450 mph Std.Dev of wind
+                opts.setWindTurbulenceIntensity(0.5)  # 10%
+                winddirection = gauss(90, 30)
+                opts.setWindDirection(math.radians(winddirection))  # 90+-30 deg
+                print("Cond: windDirection: ", winddirection, "degrees")
+                opts.setLaunchIntoWind(1)  # 90+-30 deg
+                print("Cond: Launch Into Wind")
 
-                opts.setLaunchLongitude(-106) # -106E
+                opts.setLaunchLongitude(-109) # -109E
                 opts.setLaunchLatitude(32.9) # 32.9N
                 opts.setLaunchAltitude(4848*0.3048) # 4848 ft
 
-                opts.setLaunchTemperature(gauss(27.778, 1))  # 27.778 +- 1 Celcius (82 F) in Temperature
-                opts.setLaunchPressure(gauss(1008, 1))  # 1008 mbar +- 1 in Pressure
+                # Apparently I have to manually turn it off now?
+                opts.setISAAtmosphere(False)
+                
+                temperature = gauss(31.22, 10.51 * 5 / 9) 
+                opts.setLaunchTemperature(temperature + 273.15)  # 31.22 +- 1 Celcius (88.2 F) in Temperature
+                print("Cond: Temperature: ", temperature / 5 * 9 + 32, "F")
 
+                pressure = gauss(1008, 3.938)
+                opts.setLaunchPressure(pressure * 100)  # 1008 mbar +- 1 in Pressure
+                print("Cond: Pressure: ", pressure, "mbar")
 
 
 
@@ -59,11 +72,10 @@ class LandingPoints(list):
                     component.setOverrideMass(mass * gauss(1.0, 0.05))
                 """
 
-                airstarter = AirStart(1000)  # simulation listener to drop from 0m
+                airstarter = AirStart(0)  # simulation listener to drop from 0m
                 lp = LandingPoint(self.ranges, self.bearings)
                 orh.run_simulation(sim, listeners=(airstarter, lp))
                 self.append(lp)
-                print("lp", self.ranges, self.bearings)
 
     def print_stats(self):
         print(
@@ -121,7 +133,8 @@ def bearing_flat(start, end):
 
 
 if __name__ == '__main__':
-    print("Time, Altitude, Total Acceleration, Total Velocity, Stability, Pressure")
+    #print("Time, Altitude, Total Acceleration, Total Velocity, Stability, Pressure")
     points = LandingPoints()
     points.add_simulations(1)
-    points.print_stats()
+    print("End of Sim")
+    #points.print_stats()
